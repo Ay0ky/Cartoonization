@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cartoonization App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: url("/image/back2.jpg") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      header {
+        background-color: rgba(
+          6,
+          6,
+          6,
+          0.8
+        ); /* Add a semi-transparent white background */
+        padding: 20px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        color: #fffafa;
+        margin: 0; /* Remove default margin */
+      }
+
+      #upload-container {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative; /* Set position to relative */
+        z-index: 1; /* Set z-index to ensure the buttons appear above the background */
+      }
+
+      #result-container {
+        margin-top: 20px;
+        color: #fff;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .file-input-wrapper {
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        vertical-align: middle;
+        border-radius: 50px;
+        margin: 20px;
+      }
+
+      #fileInput {
+        position: absolute;
+        font-size: 100px;
+        opacity: 0;
+        right: 0;
+        top: 0;
+      }
+
+      .choose-file-label,
+      .upload-btn,
+      .download-btn {
+        display: inline-block;
+        padding: 15px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        background-size: 300% 100%;
+        border: none;
+        border-radius: 50px;
+        transition: all 0.4s ease-in-out;
+        position: relative; /* Ensure the buttons stay above the background */
+        z-index: 2; /* Set z-index to ensure buttons appear above the background */
+      }
+
+      .choose-file-label:hover,
+      .upload-btn:hover,
+      .download-btn:hover {
+        background-position: 100% 0;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease-in-out;
+      }
+
+      .choose-file-label:focus,
+      .upload-btn:focus,
+      .download-btn:focus {
+        outline: none;
+      }
+
+      .choose-file-label.bn23,
+      .upload-btn.bn23,
+      .download-btn.bn23 {
+        background-image: linear-gradient(
+          to right,
+          #44566b,
+          #485563,
+          #2b5876,
+          #5d45b2
+        );
+        box-shadow: 0 4px 15px 0 rgba(59, 79, 104, 0.75);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>CARTOONIZATION APP</h1>
+    </header>
+
+    <div id="upload-container">
+      <!-- Styled file input wrapper for "Choose File" -->
+      <div class="file-input-wrapper">
+        <input type="file" accept="image/*" id="fileInput" />
+        <label for="fileInput" class="choose-file-label bn23"
+          >Choose File</label
+        >
+      </div>
+      <!-- Upload button -->
+      <button class="choose-file-label upload-btn bn23" onclick="uploadImage()">
+        Upload
+      </button>
+    </div>
+
+    <div id="result-container"></div>
+
+    <!-- Download button with new styles -->
+    <button
+      id="download-btn"
+      class="choose-file-label download-btn bn23"
+      onclick="downloadImage()"
+      disabled
+    >
+      Download Cartoonized Image
+    </button>
+
+    <script>
+      let cartoonizedImagePath = "";
+
+      function uploadImage() {
+        const fileInput = document.getElementById("fileInput");
+
+        const file = fileInput.files[0];
+
+        if (file) {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          // Simulate AJAX request (replace this with actual backend integration)
+          setTimeout(() => {
+            cartoonizedImagePath = "path/to/cartoonized-image.jpg";
+            displayResult(cartoonizedImagePath);
+            enableDownloadButton();
+          }, 1000);
+        }
+      }
+
+      function displayResult(cartoonizedImage) {
+        const resultContainer = document.getElementById("result-container");
+        resultContainer.innerHTML = `
+        <h2>Cartoonized Image</h2>
+        <img src="${cartoonizedImage}" alt="Cartoonized" />
+      `;
+      }
+
+      function enableDownloadButton() {
+        const downloadBtn = document.getElementById("download-btn");
+        downloadBtn.removeAttribute("disabled");
+      }
+
+      function downloadImage() {
+        if (cartoonizedImagePath) {
+          const link = document.createElement("a");
+          link.href = cartoonizedImagePath;
+          link.download = "cartoonized-image.jpg";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+    </script>
+  </body>
+</html>

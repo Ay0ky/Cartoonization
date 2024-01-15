@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cartoonization App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(90deg, #000000 0%, #ffffff 100%),
+          url("/static/image/back2.jpg") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: #ffffff; /* Font color */
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      form {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      label {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      input[type="file"] {
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 15px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        background-size: 300% 100%;
+        border: none;
+        border-radius: 50px;
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        z-index: 2;
+        color: #ffffff; /* Button text color */
+      }
+
+      button:hover {
+        background-position: 100% 0;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease-in-out;
+      }
+
+      button:focus {
+        outline: none;
+      }
+
+      #result-container {
+        margin-top: 20px;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>CARTOONIZATION APP</h1>
+
+    <form action="/cartoonize" method="post" enctype="multipart/form-data">
+      <label for="image">Choose Image:</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+      <button type="submit">Cartoonize</button>
+    </form>
+
+    <div id="result-container"></div>
+
+    <button id="download-btn" onclick="downloadImage()" disabled>
+      Download Cartoonized Image
+    </button>
+
+    <script>
+      let cartoonizedImagePath = "";
+
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById("image");
+        const file = fileInput.files[0];
+
+        if (file) {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          fetch("/cartoonize", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              cartoonizedImagePath = `data:image/jpeg;base64,${data.cartoonized_image}`;
+              displayResult(cartoonizedImagePath);
+              enableDownloadButton();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      });
+
+      function displayResult(cartoonizedImage) {
+        const resultContainer = document.getElementById("result-container");
+        resultContainer.innerHTML = `
+                <h2>Cartoonized Image</h2>
+                <img src="${cartoonizedImage}" alt="Cartoonized">
+            `;
+      }
+
+      function enableDownloadButton() {
+        const downloadBtn = document.getElementById("download-btn");
+        downloadBtn.removeAttribute("disabled");
+      }
+
+      function downloadImage() {
+        if (cartoonizedImagePath) {
+          const link = document.createElement("a");
+          link.href = cartoonizedImagePath;
+          link.download = "cartoonized-image.jpg";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+    </script>
+  </body>
+</html>
